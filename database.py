@@ -9,7 +9,8 @@ load_dotenv()
 
 def get_engine():
     """Crea y devuelve la conexión SQLAlchemy basándose en la configuración del .env"""
-    db_type = os.getenv("DB_TYPE", "sqlite").lower()
+    # Si la variable no existe o está vacía en el .env, usamos 'sqlite' por defecto
+    db_type = os.getenv("DB_TYPE", "").strip().lower() or "sqlite"
     
     try:
         if db_type == "mysql":
