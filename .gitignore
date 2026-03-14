@@ -1,0 +1,17 @@
+# Entornos virtuales
+venv/
+env/
+.env
+
+# Archivos de caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Archivos de base de datos local
+
+*.sqlite3
+
+# Streamlit
+.streamlit/
+definicion_tabla.sql
