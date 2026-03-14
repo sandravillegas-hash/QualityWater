@@ -21,7 +21,7 @@ Este proyecto es una aplicación web interactiva construida con **Python** y **S
 
 ## 💻 Requisitos Previos
 
-Necesitas tener instalado **Python 3.9+**. 
+Necesitas tener instalado **Python 3.9, 3.10, 3.11, 3.12 o 3.13**. (Probado localmente en Python 3.13 con soporte nativo).
 
 Las dependencias principales del proyecto se encuentran en `requirements.txt`:
 - `streamlit`
