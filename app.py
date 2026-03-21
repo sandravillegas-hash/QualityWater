@@ -27,6 +27,7 @@ st.markdown("""
 # Importar las páginas modulares
 from vistas.dashboard import render_dashboard_principal
 from vistas.consultas import render_consultas_analiticas
+from vistas.sql_interactivo import render_sql_interactivo
 
 # --- ENRUTAMIENTO MULTIPÁGINA (Sidebar) ---
 st.sidebar.title("Desarrollo Estudiantes Talento Tech")
@@ -34,7 +35,7 @@ st.sidebar.markdown("---")
 
 ruta_opcion = st.sidebar.radio(
     "Selecciona una vista:",
-    ("Dashboard Principal (IRCA)", "Consultas Analíticas (SQL)")
+    ("Dashboard Principal (IRCA)", "Consultas Analíticas (SQL)", "Laboratorio SQL Interactivo")
 )
 
 st.sidebar.markdown("---")
@@ -45,3 +46,5 @@ if ruta_opcion == "Dashboard Principal (IRCA)":
     render_dashboard_principal()
 elif ruta_opcion == "Consultas Analíticas (SQL)":
     render_consultas_analiticas()
+elif ruta_opcion == "Laboratorio SQL Interactivo":
+    render_sql_interactivo()
