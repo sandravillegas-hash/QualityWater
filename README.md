@@ -2,7 +2,6 @@
 Análisis histórico del indicador IRCA
 Una aplicación web interactiva construida con **Streamlit** para visualizar y analizar el dataset de Uber extraído de una base de datos SQL.
  
-
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 
 ![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
