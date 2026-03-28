@@ -84,11 +84,5 @@ Si cambias a `DB_TYPE=mysql`, el proyecto se conectará usando las credenciales 
 
 ## ▶️ Ejecución del Dashboard
 
-Una vez todo esté configurado, ejecuta el dashboard abriendo tu consola y usando el siguiente comando:
-
-```bash
-streamlit run app.py
-```
-
 La aplicación procesará la lectura de la base de datos, levantará un servidor local automáticamente y se abrirá en tu navegador web por defecto en la dirección:
-👉 **[http://localhost:8501](http://localhost:8501)**
+👉 **[[https://qualitywater-smv.streamlit.app/](https://qualitywater-smv.streamlit.app/)**
