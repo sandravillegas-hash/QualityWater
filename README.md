@@ -1,7 +1,23 @@
 # QualityWater
 Análisis histórico del indicador IRCA
+Una aplicación web interactiva construida con **Streamlit** para visualizar y analizar el dataset de Uber extraído de una base de datos SQL.
+ 
+
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+
+![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
+
+![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
+
+![Plotly](https://img.shields.io/badge/Plotly-3F4F75?style=for-the-badge&logo=plotly&logoColor=white)
+
+![Kaggle](https://img.shields.io/badge/Kaggle-20BEFF?style=for-the-badge&logo=kaggle&logoColor=white)
+
+![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+
 
 # 💧 Dashboard de Calidad del Agua (IRCA Histórico)
+
 
 Este proyecto es una aplicación web interactiva construida con **Python** y **Streamlit**. Está diseñada para explorar de forma visual e interactiva el histórico del **Índice de Riesgo de la Calidad del Agua (IRCA)** a nivel departamental y municipal en Colombia.
 
