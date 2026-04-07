@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QualityWater | Análisis Histórico IRCA Colombia</title>
+    <meta name="description"
+        content="Dashboard interactivo para análisis del Índice de Riesgo de Calidad del Agua en Colombia. Datos históricos 2007-2024.">
+
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            900: '#0c4a6e',
+                        },
+                        accent: {
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                        }
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                        'fade-in': 'fadeIn 1s ease-out forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .hero-bg {
+            background-image: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%), url('https://image.qwenlm.ai/public_source/dbe85d24-6a75-4838-93a0-9b2c959f7486/1b1924218-2219-4c18-a7cb-259bb7280aa2.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #0ea5e9 0%, #14b8a6 100%);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .code-block {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 0.75rem;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #334155;
+        }
+
+        .code-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #0ea5e9, #14b8a6, #0ea5e9);
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .feature-icon {
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+            color: #0284c7;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .feature-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.15);
+        }
+
+        .feature-card:hover .feature-icon {
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            color: white;
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .stat-card {
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .section-divider {
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-divider::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #0ea5e9, #14b8a6);
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        /* Scrollbar personalizado */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Animación de partículas */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(14, 165, 233, 0.3);
+            animation: float 20s infinite linear;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            background: #0ea5e9;
+            border-radius: 50%;
+            border: 4px solid #e0f2fe;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 20px;
+            width: 2px;
+            height: calc(100% - 20px);
+            background: #e2e8f0;
+        }
+
+        .timeline-item:last-child::after {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 overflow-x-hidden">
+
+    <!-- Partículas de fondo -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="particle w-4 h-4 top-20 left-10" style="animation-delay: 0s;"></div>
+        <div class="particle w-3 h-3 top-40 right-20" style="animation-delay: 5s;"></div>
+        <div class="particle w-5 h-5 bottom-40 left-1/4" style="animation-delay: 10s;"></div>
+        <div class="particle w-2 h-2 bottom-20 right-1/3" style="animation-delay: 15s;"></div>
+    </div>
+
+    <!-- Navegación -->
+    <nav class="fixed w-full z-50 transition-all duration-300 bg-white/95 backdrop-blur-md border-b border-slate-200/50"
+        id="navbar">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <a href="#" class="flex items-center gap-3 group">
+                    <div
+                        class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary-500/30 group-hover:shadow-primary-500/50 transition-all duration-300">
+                        <i class="fa-solid fa-droplet text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl font-bold text-slate-900 tracking-tight block">Quality<span
+                                class="text-primary-600">Water</span></span>
+                        <span class="text-xs text-slate-500 -mt-1 block">Análisis IRCA</span>
+                    </div>
+                </a>
+
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="#inicio"
+                        class="text-sm font-medium text-slate-600 hover:text-primary-600 transition duration-300">Inicio</a>
+                    <a href="#contexto"
+                        class="text-sm font-medium text-slate-600 hover:text-primary-600 transition duration-300">Contexto
+                        IRCA</a>
+                    <a href="#caracteristicas"
+                        class="text-sm font-medium text-slate-600 hover:text-primary-600 transition duration-300">Características</a>
+                    <a href="#tecnologia"
+                        class="text-sm font-medium text-slate-600 hover:text-primary-600 transition duration-300">Tecnología</a>
+                    <a href="#instalacion"
+                        class="text-sm font-medium text-slate-600 hover:text-primary-600 transition duration-300">Instalación</a>
+                    <a href="#instalacion"
+                        class="px-6 py-2.5 btn-primary text-white text-sm font-semibold rounded-full shadow-lg">
+                        <i class="fa-solid fa-download mr-2"></i>Comenzar
+                    </a>
+                </div>
+
+                <button class="lg:hidden text-slate-600 focus:outline-none p-2" onclick="toggleMenu()"
+                    aria-label="Menú">
+                    <i class="fa-solid fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-slate-100 absolute w-full shadow-lg">
+            <div class="flex flex-col px-6 py-4 space-y-4">
+                <a href="#inicio" class="text-slate-600 hover:text-primary-600 font-medium py-2"
+                    onclick="toggleMenu()">Inicio</a>
+                <a href="#contexto" class="text-slate-600 hover:text-primary-600 font-medium py-2"
+                    onclick="toggleMenu()">Contexto IRCA</a>
+                <a href="#caracteristicas" class="text-slate-600 hover:text-primary-600 font-medium py-2"
+                    onclick="toggleMenu()">Características</a>
+                <a href="#tecnologia" class="text-slate-600 hover:text-primary-600 font-medium py-2"
+                    onclick="toggleMenu()">Tecnología</a>
+                <a href="#instalacion" class="text-slate-600 hover:text-primary-600 font-medium py-2"
+                    onclick="toggleMenu()">Instalación</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Héroe -->
+    <header id="inicio" class="relative min-h-screen flex items-center justify-center hero-bg overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-slate-900/50 to-slate-900"></div>
+
+        <!-- Elementos decorativos -->
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-500/20 rounded-full blur-3xl animate-pulse-slow">
+        </div>
+        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent-500/20 rounded-full blur-3xl animate-pulse-slow"
+            style="animation-delay: 2s;"></div>
+
+        <div class="container mx-auto px-6 relative z-10 text-center">
+            <div
+                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm font-medium mb-8 animate-fade-in-up">
+                <span class="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse"></span>
+                <span>Datos Actualizados 2007 - 2024</span>
+            </div>
+
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-extrabold text-white mb-8 leading-tight tracking-tight animate-fade-in-up"
+                style="animation-delay: 0.15s;">
+                Análisis Histórico del<br>
+                <span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-cyan-400 to-teal-300">Indicador
+                    IRCA</span>
+            </h1>
+
+            <p class="text-xl md:text-2xl text-slate-300 mb-12 max-w-3xl mx-auto leading-relaxed animate-fade-in-up"
+                style="animation-delay: 0.3s;">
+                Dashboard interactivo para explorar la calidad del agua en Colombia.
+                Visualiza riesgos sanitarios, tendencias históricas y datos críticos en tiempo real.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-5 justify-center animate-fade-in-up"
+                style="animation-delay: 0.45s;">
+                <a href="#instalacion"
+                    class="px-10 py-5 btn-primary text-white font-bold rounded-2xl transition-all shadow-2xl shadow-primary-600/40 flex items-center justify-center gap-3 text-lg">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Comenzar Proyecto</span>
+                </a>
+                <a href="#caracteristicas"
+                    class="px-10 py-5 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/30 text-white font-bold rounded-2xl transition-all hover:scale-105 flex items-center justify-center gap-3 text-lg">
+                    <i class="fa-solid fa-circle-play"></i>
+                    <span>Ver Demo</span>
+                </a>
+            </div>
+
+            <!-- Estadísticas rápidas -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20 max-w-4xl mx-auto animate-fade-in-up"
+                style="animation-delay: 0.6s;">
+                <div class="glass-card rounded-2xl p-6 text-center">
+                    <div class="text-3xl md:text-4xl font-bold text-primary-600 mb-2">17+</div>
+                    <div class="text-sm text-slate-600">Años de Datos</div>
+                </div>
+                <div class="glass-card rounded-2xl p-6 text-center">
+                    <div class="text-3xl md:text-4xl font-bold text-primary-600 mb-2">32</div>
+                    <div class="text-sm text-slate-600">Departamentos</div>
+                </div>
+                <div class="glass-card rounded-2xl p-6 text-center">
+                    <div class="text-3xl md:text-4xl font-bold text-primary-600 mb-2">1100+</div>
+                    <div class="text-sm text-slate-600">Municipios</div>
+                </div>
+                <div class="glass-card rounded-2xl p-6 text-center">
+                    <div class="text-3xl md:text-4xl font-bold text-primary-600 mb-2">100%</div>
+                    <div class="text-sm text-slate-600">Código Abierto</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Indicador de scroll -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-white/50">
+            <i class="fa-solid fa-chevron-down text-2xl"></i>
+        </div>
+    </header>
+
+    <!-- Sección Contexto IRCA -->
+    <section id="contexto" class="py-24 bg-white relative overflow-hidden">
+        <div
+            class="absolute top-0 right-0 w-96 h-96 bg-primary-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2">
+        </div>
+        <div
+            class="absolute bottom-0 left-0 w-96 h-96 bg-accent-50 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2">
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center mb-16">
+                <span
+                    class="inline-block px-4 py-2 bg-primary-100 text-primary-700 text-sm font-bold uppercase tracking-wider rounded-full mb-4">
+                    Marco Normativo
+                </span>
+                <h2 class="text-4xl md:text-5xl font-bold text-slate-900 mb-6 section-divider">¿Qué es el IRCA?</h2>
+                <p class="text-xl text-slate-600 max-w-3xl mx-auto">
+                    El Índice de Riesgo de la Calidad del Agua es el indicador oficial en Colombia para evaluar la
+                    seguridad del agua para consumo humano.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12 items-center mb-20">
+                <div class="order-2 lg:order-1">
+                    <div
+                        class="bg-gradient-to-br from-slate-50 to-white p-8 rounded-3xl border border-slate-200 shadow-xl">
+                        <h3 class="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+                            <i class="fa-solid fa-scale-balanced text-primary-600"></i>
+                            Base Legal
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-4 p-4 bg-white rounded-xl border border-slate-100">
+                                <div
+                                    class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fa-solid fa-book text-primary-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800">Decreto 1575 de 2007</h4>
+                                    <p class="text-sm text-slate-600">Establece el sistema para la protección y control
+                                        de la calidad del agua</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4 p-4 bg-white rounded-xl border border-slate-100">
+                                <div
+                                    class="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fa-solid fa-file-signature text-accent-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800">Resolución 2115 de 2007</h4>
+                                    <p class="text-sm text-slate-600">Define los parámetros y valores máximos permitidos
+                                        en agua potable</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-1 lg:order-2">
+                    <div class="relative">
+                        <div class="absolute inset-0 gradient-bg rounded-3xl transform rotate-3 opacity-20 blur-lg">
+                        </div>
+                        <img src="https://image.qwenlm.ai/public_source/dbe85d24-6a75-4838-93a0-9b2c959f7486/139153de9-c2db-4c25-9bb5-bd2eb12ca85b.png"
+                            alt="Visualización de datos del dashboard"
+                            class="relative rounded-3xl shadow-2xl border border-slate-200 w-full transform hover:scale-[1.02] transition duration-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parámetros evaluados -->
+            <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-8 md:p-12 text-white">
+                <h3 class="text-3xl font-bold mb-8 text-center">Parámetros Evaluados</h3>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div
+                        class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/15 transition">
+                        <div class="w-14 h-14 bg-blue-500/20 rounded-xl flex items-center justify-center text-2xl mb-4">
+                            <i class="fa-solid fa-eye text-blue-400"></i>
+                        </div>
+                        <h4 class="font-bold text-lg mb-2">Físicos</h4>
+                        <ul class="text-sm text-slate-300 space-y-1">
+                            <li>• Turbidez</li>
+                            <li>• Color</li>
+                            <li>• Olor</li>
+                            <li>• Sabor</li>
+                        </ul>
+                    </div>
+
+                    <div
+                        class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/15 transition">
+                        <div
+                            class="w-14 h-14 bg-green-500/20 rounded-xl flex items-center justify-center text-2xl mb-4">
+                            <i class="fa-solid fa-flask text-green-400"></i>
+                        </div>
+                        <h4 class="font-bold text-lg mb-2">Químicos</h4>
+                        <ul class="text-sm text-slate-300 space-y-1">
+                            <li>• pH</li>
+                            <li>• Cloro residual</li>
+                            <li>• Metales pesados</li>
+                            <li>• Nitratos</li>
+                        </ul>
+                    </div>
+
+                    <div
+                        class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/15 transition">
+                        <div class="w-14 h-14 bg-red-500/20 rounded-xl flex items-center justify-center text-2xl mb-4">
+                            <i class="fa-solid fa-bacteria text-red-400"></i>
+                        </div>
+                        <h4 class="font-bold text-lg mb-2">Microbiológicos</h4>
+                        <ul class="text-sm text-slate-300 space-y-1">
+                            <li>• Coliformes totales</li>
+                            <li>• Coliformes fecales</li>
+                            <li>• E. coli</li>
+                        </ul>
+                    </div>
+
+                    <div
+                        class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/15 transition">
+                        <div
+                            class="w-14 h-14 bg-yellow-500/20 rounded-xl flex items-center justify-center text-2xl mb-4">
+                            <i class="fa-solid fa-leaf text-yellow-400"></i>
+                        </div>
+                        <h4 class="font-bold text-lg mb-2">Pesticidas</h4>
+                        <ul class="text-sm text-slate-300 space-y-1">
+                            <li>• Organofosforados</li>
+                            <li>• Carbamatos</li>
+                            <li>• Triazinas</li>
+                            <li>• Piretroides</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-8 p-6 bg-white/5 rounded-2xl border border-white/10">
+                    <div class="flex items-start gap-4">
+                        <i class="fa-solid fa-circle-info text-primary-400 text-2xl mt-1"></i>
+                        <div>
+                            <h4 class="font-bold mb-2">Interpretación del IRCA</h4>
+                            <p class="text-slate-300 text-sm">
+                                El IRCA refleja la probabilidad de que el agua cause enfermedades de origen hídrico si
+                                no cumple con los estándares de calidad.
+                                Se expresa en porcentaje (0-100%) y clasifica el agua en niveles desde "Sin Riesgo"
+                                hasta "Inviable Sanitariamente".
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Características -->
+    <section id="caracteristicas" class="py-24 bg-gradient-to-b from-slate-50 to-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span
+                    class="inline-block px-4 py-2 bg-primary-100 text-primary-700 text-sm font-bold uppercase tracking-wider rounded-full mb-4">
+                    Funcionalidades
+                </span>
+                <h2 class="text-4xl md:text-5xl font-bold text-slate-900 mb-6 section-divider">Características
+                    Principales</h2>
+                <p class="text-xl text-slate-600">
+                    Una herramienta completa diseñada para investigadores, funcionarios públicos y ciudadanos
+                    interesados en la transparencia de datos hídricos.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+                <div class="feature-card bg-white p-8 rounded-3xl shadow-lg border border-slate-100">
+                    <div class="w-16 h-16 rounded-2xl feature-icon flex items-center justify-center text-3xl mb-6">
+                        <i class="fa-solid fa-filter"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Filtros Interactivos</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Filtra registros por año (2007-2024), departamento y municipio para un análisis granular y
+                        específico de los datos.
+                    </p>
+                </div>
+
+                <div class="feature-card bg-white p-8 rounded-3xl shadow-lg border border-slate-100">
+                    <div class="w-16 h-16 rounded-2xl feature-icon flex items-center justify-center text-3xl mb-6">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">KPIs Dinámicos</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Visualización automática de promedios IRCA (General, Urbano, Rural) y conteo de mediciones
+                        actualizados en tiempo real.
+                    </p>
+                </div>
+
+                <div class="feature-card bg-white p-8 rounded-3xl shadow-lg border border-slate-100">
+                    <div class="w-16 h-16 rounded-2xl feature-icon flex items-center justify-center text-3xl mb-6">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Gráficos Plotly</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Evolución temporal, distribución de riesgos, Top 10 municipios críticos y análisis de dispersión
+                        comparativo.
+                    </p>
+                </div>
+
+                <div class="feature-card bg-white p-8 rounded-3xl shadow-lg border border-slate-100">
+                    <div class="w-16 h-16 rounded-2xl feature-icon flex items-center justify-center text-3xl mb-6">
+                        <i class="fa-solid fa-database"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Base de Datos Dual</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Soporte flexible para MySQL (producción) o SQLite (local) configurado mediante variables de
+                        entorno.
+                    </p>
+                </div>
+
+                <div class="feature-card bg-white p-8 rounded-3xl shadow-lg border border-slate-100">
+                    <div class="w-16 h-16 rounded-2xl feature-icon flex items-center justify-center text-3xl mb-6">
+                        <i class="fa-solid fa-file-csv"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Exportación CSV</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Descarga la información filtrada directamente a archivos .csv para reportes externos o análisis
+                        adicionales.
+                    </p>
+                </div>
+
+                <div class="feature-card bg-white p-8 rounded-3xl shadow-lg border border-slate-100">
+                    <div class="w-16 h-16 rounded-2xl feature-icon flex items-center justify-center text-3xl mb-6">
+                        <i class="fa-solid fa-mobile-screen"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Diseño Responsivo</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Interfaz adaptativa que funciona perfectamente en escritorio, tabletas y dispositivos móviles.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Tipos de gráficos -->
+            <div class="bg-gradient-to-br from-primary-900 to-slate-900 rounded-3xl p-8 md:p-12 text-white">
+                <h3 class="text-3xl font-bold mb-8 text-center">Visualizaciones Disponibles</h3>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="text-center p-6 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/10">
+                        <div
+                            class="w-16 h-16 mx-auto mb-4 bg-primary-500/20 rounded-full flex items-center justify-center">
+                            <i class="fa-solid fa-chart-area text-2xl text-primary-400"></i>
+                        </div>
+                        <h4 class="font-bold mb-2">Evolución Temporal</h4>
+                        <p class="text-sm text-slate-300">Promedios IRCA por zona a través del tiempo</p>
+                    </div>
+
+                    <div class="text-center p-6 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/10">
+                        <div
+                            class="w-16 h-16 mx-auto mb-4 bg-accent-500/20 rounded-full flex items-center justify-center">
+                            <i class="fa-solid fa-chart-pie text-2xl text-accent-400"></i>
+                        </div>
+                        <h4 class="font-bold mb-2">Distribución</h4>
+                        <p class="text-sm text-slate-300">Nivel de riesgo general tipo gráfico circular</p>
+                    </div>
+
+                    <div class="text-center p-6 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/10">
+                        <div class="w-16 h-16 mx-auto mb-4 bg-red-500/20 rounded-full flex items-center justify-center">
+                            <i class="fa-solid fa-chart-column text-2xl text-red-400"></i>
+                        </div>
+                        <h4 class="font-bold mb-2">Top 10 Críticos</h4>
+                        <p class="text-sm text-slate-300">Municipios con peor nivel IRCA</p>
+                    </div>
+
+                    <div class="text-center p-6 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/10">
+                        <div
+                            class="w-16 h-16 mx-auto mb-4 bg-yellow-500/20 rounded-full flex items-center justify-center">
+                            <i class="fa-solid fa-chart-scatter text-2xl text-yellow-400"></i>
+                        </div>
+                        <h4 class="font-bold mb-2">Dispersión</h4>
+                        <p class="text-sm text-slate-300">IRCA Urbano vs Rural comparativo</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Tecnología -->
+    <section id="tecnologia" class="py-24 bg-slate-900 text-white relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full">
+            <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-primary-500/10 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-64 h-64 bg-accent-500/10 rounded-full blur-3xl"></div>
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center mb-16">
+                <span
+                    class="inline-block px-4 py-2 bg-white/10 text-primary-400 text-sm font-bold uppercase tracking-wider rounded-full mb-4">
+                    Stack Tecnológico
+                </span>
+                <h2 class="text-4xl md:text-5xl font-bold mb-6 section-divider text-white">Tecnología Utilizada</h2>
+                <p class="text-xl text-slate-400 max-w-3xl mx-auto">
+                    Construido con las mejores herramientas de Ciencia de Datos en Python para máximo rendimiento y
+                    escalabilidad.
+                </p>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-6 mb-16">
+                <div
+                    class="flex items-center gap-4 bg-slate-800/80 backdrop-blur-sm px-8 py-5 rounded-2xl border border-slate-700 hover:border-primary-500 transition-all hover:scale-105">
+                    <i class="fa-brands fa-python text-yellow-400 text-4xl"></i>
+                    <div>
+                        <div class="font-bold text-lg">Python</div>
+                        <div class="text-sm text-slate-400">3.9 - 3.13</div>
+                    </div>
+                </div>
+                <div
+                    class="flex items-center gap-4 bg-slate-800/80 backdrop-blur-sm px-8 py-5 rounded-2xl border border-slate-700 hover:border-red-500 transition-all hover:scale-105">
+                    <i class="fa-solid fa-chart-simple text-red-400 text-4xl"></i>
+                    <div>
+                        <div class="font-bold text-lg">Streamlit</div>
+                        <div class="text-sm text-slate-400">Framework Web</div>
+                    </div>
+                </div>
+                <div
+                    class="flex items-center gap-4 bg-slate-800/80 backdrop-blur-sm px-8 py-5 rounded-2xl border border-slate-700 hover:border-blue-500 transition-all hover:scale-105">
+                    <i class="fa-solid fa-table text-blue-400 text-4xl"></i>
+                    <div>
+                        <div class="font-bold text-lg">Pandas</div>
+                        <div class="text-sm text-slate-400">Análisis de Datos</div>
+                    </div>
+                </div>
+                <div
+                    class="flex items-center gap-4 bg-slate-800/80 backdrop-blur-sm px-8 py-5 rounded-2xl border border-slate-700 hover:border-green-500 transition-all hover:scale-105">
+                    <i class="fa-solid fa-chart-area text-green-400 text-4xl"></i>
+                    <div>
+                        <div class="font-bold text-lg">Plotly</div>
+                        <div class="text-sm text-slate-400">Visualización</div>
+                    </div>
+                </div>
+                <div
+                    class="flex items-center gap-4 bg-slate-800/80 backdrop-blur-sm px-8 py-5 rounded-2xl border border-slate-700 hover:border-orange-500 transition-all hover:scale-105">
+                    <i class="fa-solid fa-server text-orange-400 text-4xl"></i>
+                    <div>
+                        <div class="font-bold text-lg">SQLAlchemy</div>
+                        <div class="text-sm text-slate-400">ORM Database</div>
+                    </div>
+                </div>
+                <div
+                    class="flex items-center gap-4 bg-slate-800/80 backdrop-blur-sm px-8 py-5 rounded-2xl border border-slate-700 hover:border-green-600 transition-all hover:scale-105">
+                    <i class="fa-brands fa-envira text-green-500 text-4xl"></i>
+                    <div>
+                        <div class="font-bold text-lg">DotEnv</div>
+                        <div class="text-sm text-slate-400">Variables de Entorno</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scripts incluidos -->
+            <div class="max-w-4xl mx-auto bg-slate-800/50 backdrop-blur-sm rounded-3xl p-8 border border-slate-700">
+                <h3 class="text-2xl font-bold mb-6 text-center">Scripts de Utilidad Incluidos</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-slate-900/50 rounded-2xl p-6 border border-slate-700">
+                        <div class="flex items-center gap-3 mb-3">
+                            <i class="fa-solid fa-terminal text-primary-400"></i>
+                            <h4 class="font-bold text-lg">test_db.py</h4>
+                        </div>
+                        <p class="text-slate-400 text-sm">
+                            Script de prueba para confirmar la conexión a MySQL desde la terminal sin necesidad de
+                            levantar toda la aplicación web.
+                        </p>
+                    </div>
+                    <div class="bg-slate-900/50 rounded-2xl p-6 border border-slate-700">
+                        <div class="flex items-center gap-3 mb-3">
+                            <i class="fa-solid fa-database text-accent-400"></i>
+                            <h4 class="font-bold text-lg">migrate_to_sqlite.py</h4>
+                        </div>
+                        <p class="text-slate-400 text-sm">
+                            Herramienta para administradores que extrae todos los registros de MySQL y construye una
+                            base local en quality_water.db.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Guía de Instalación -->
+    <section id="instalacion" class="py-24 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="max-w-5xl mx-auto">
+                <div class="text-center mb-16">
+                    <span
+                        class="inline-block px-4 py-2 bg-primary-100 text-primary-700 text-sm font-bold uppercase tracking-wider rounded-full mb-4">
+                        Guía Paso a Paso
+                    </span>
+                    <h2 class="text-4xl md:text-5xl font-bold text-slate-900 mb-6 section-divider">Instalación y
+                        Configuración</h2>
+                    <p class="text-xl text-slate-600 max-w-3xl mx-auto">
+                        Sigue estos pasos para levantar el dashboard en tu entorno local en menos de 5 minutos.
+                    </p>
+                </div>
+
+                <div class="relative">
+                    <!-- Línea de tiempo -->
+                    <div
+                        class="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary-500 via-accent-500 to-primary-500 hidden md:block">
+                    </div>
+
+                    <div class="space-y-12">
+                        <!-- Paso 1 -->
+                        <div class="timeline-item relative flex flex-col md:flex-row gap-6 pl-0 md:pl-20">
+                            <div class="md:w-1/4">
+                                <div
+                                    class="w-16 h-16 gradient-bg text-white rounded-full flex items-center justify-center font-bold text-2xl mb-4 shadow-lg shadow-primary-500/30">
+                                    1</div>
+                                <h3 class="text-xl font-bold text-slate-900">Clonar Repositorio</h3>
+                                <p class="text-slate-500 text-sm mt-2">Obtén el código fuente</p>
+                            </div>
+                            <div class="md:w-3/4">
+                                <div class="code-block p-6 font-mono text-sm text-slate-300">
+                                    <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-3">
+                                        <span class="text-xs text-slate-500 flex items-center gap-2">
+                                            <i class="fa-solid fa-terminal"></i> Consola
+                                        </span>
+                                        <button
+                                            class="text-xs text-slate-400 hover:text-white transition flex items-center gap-1"
+                                            onclick="copyToClipboard('git clone https://github.com/sandravillegas-hash/QualityWater.git')">
+                                            <i class="fa-regular fa-copy"></i> Copiar
+                                        </button>
+                                    </div>
+                                    <code
+                                        class="block">git clone https://github.com/sandravillegas-hash/QualityWater.git </code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Paso 2 -->
+                        <div class="timeline-item relative flex flex-col md:flex-row gap-6 pl-0 md:pl-20">
+                            <div class="md:w-1/4">
+                                <div
+                                    class="w-16 h-16 gradient-bg text-white rounded-full flex items-center justify-center font-bold text-2xl mb-4 shadow-lg shadow-primary-500/30">
+                                    2</div>
+                                <h3 class="text-xl font-bold text-slate-900">Instalar Dependencias</h3>
+                                <p class="text-slate-500 text-sm mt-2">Requiere Python 3.9+</p>
+                            </div>
+                            <div class="md:w-3/4">
+                                <div class="code-block p-6 font-mono text-sm text-slate-300">
+                                    <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-3">
+                                        <span class="text-xs text-slate-500 flex items-center gap-2">
+                                            <i class="fa-solid fa-terminal"></i> Consola
+                                        </span>
+                                        <button
+                                            class="text-xs text-slate-400 hover:text-white transition flex items-center gap-1"
+                                            onclick="copyToClipboard('pip install -r requirements.txt')">
+                                            <i class="fa-regular fa-copy"></i> Copiar
+                                        </button>
+                                    </div>
+                                    <code class="block">pip install -r requirements.txt</code>
+                                </div>
+                                <div class="mt-4 flex flex-wrap gap-2">
+                                    <span
+                                        class="px-3 py-1 bg-slate-100 text-slate-600 text-xs rounded-full">streamlit</span>
+                                    <span
+                                        class="px-3 py-1 bg-slate-100 text-slate-600 text-xs rounded-full">pandas</span>
+                                    <span
+                                        class="px-3 py-1 bg-slate-100 text-slate-600 text-xs rounded-full">plotly</span>
+                                    <span
+                                        class="px-3 py-1 bg-slate-100 text-slate-600 text-xs rounded-full">sqlalchemy</span>
+                                    <span
+                                        class="px-3 py-1 bg-slate-100 text-slate-600 text-xs rounded-full">mysql-connector-python</span>
+                                    <span
+                                        class="px-3 py-1 bg-slate-100 text-slate-600 text-xs rounded-full">python-dotenv</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Paso 3 -->
+                        <div class="timeline-item relative flex flex-col md:flex-row gap-6 pl-0 md:pl-20">
+                            <div class="md:w-1/4">
+                                <div
+                                    class="w-16 h-16 gradient-bg text-white rounded-full flex items-center justify-center font-bold text-2xl mb-4 shadow-lg shadow-primary-500/30">
+                                    3</div>
+                                <h3 class="text-xl font-bold text-slate-900">Configurar .env</h3>
+                                <p class="text-slate-500 text-sm mt-2">Define tu conexión</p>
+                            </div>
+                            <div class="md:w-3/4">
+                                <div
+                                    class="bg-gradient-to-br from-slate-50 to-white border border-slate-200 rounded-2xl p-6 shadow-lg">
+                                    <p class="text-slate-700 mb-4 text-sm font-medium">
+                                        <i class="fa-solid fa-file-code text-primary-600 mr-2"></i>
+                                        Crea un archivo <code
+                                            class="px-2 py-1 bg-slate-100 rounded text-primary-600">.env</code> en la
+                                        raíz del proyecto:
+                                    </p>
+                                    <div class="code-block p-6 font-mono text-sm text-slate-300">
+                                        <pre class="overflow-x-auto">DB_TYPE=sqlite
+DB_HOST=127.0.0.1
+DB_USER=root
+DB_PASSWORD=tu_contraseña
+DB_NAME=quality_water
+DB_PORT=3306</pre>
+                                    </div>
+                                    <div
+                                        class="mt-5 p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-100">
+                                        <div class="flex items-start gap-3">
+                                            <i class="fa-solid fa-circle-info text-blue-500 mt-0.5"></i>
+                                            <p class="text-xs text-blue-800 leading-relaxed">
+                                                <strong>Recomendado:</strong> Si usas <code
+                                                    class="px-1.5 py-0.5 bg-blue-100 rounded text-blue-700">DB_TYPE=sqlite</code>,
+                                                el proyecto leerá automáticamente el archivo <code
+                                                    class="px-1.5 py-0.5 bg-blue-100 rounded text-blue-700">quality_water.db</code>
+                                                sin necesidad de configurar usuario o contraseña. Ideal para desarrollo
+                                                local.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Paso 4 -->
+                        <div class="timeline-item relative flex flex-col md:flex-row gap-6 pl-0 md:pl-20">
+                            <div class="md:w-1/4">
+                                <div
+                                    class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 text-white rounded-full flex items-center justify-center font-bold text-2xl mb-4 shadow-lg shadow-green-500/30">
+                                    4</div>
+                                <h3 class="text-xl font-bold text-slate-900">Ejecutar Dashboard</h3>
+                                <p class="text-slate-500 text-sm mt-2">¡Listo para usar!</p>
+                            </div>
+                            <div class="md:w-3/4">
+                                <div class="code-block p-6 font-mono text-sm text-slate-300">
+                                    <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-3">
+                                        <span class="text-xs text-slate-500 flex items-center gap-2">
+                                            <i class="fa-solid fa-terminal"></i> Consola
+                                        </span>
+                                        <button
+                                            class="text-xs text-slate-400 hover:text-white transition flex items-center gap-1"
+                                            onclick="copyToClipboard('streamlit run https://qualitywater-smv.streamlit.app/')">
+                                            <i class="fa-regular fa-copy"></i> Copiar
+                                        </button>
+                                    </div>
+                                    <code class="block">streamlit run https://qualitywater-smv.streamlit.app/</code>
+                                </div>
+                                <div
+                                    class="mt-6 text-center p-6 bg-gradient-to-r from-primary-50 to-accent-50 rounded-2xl border border-primary-100">
+                                    <p class="text-slate-600 mb-3 font-medium">La aplicación se abrirá automáticamente
+                                        en:</p>
+                                    <a href="https://qualitywater-smv.streamlit.app/"
+                                        class="inline-flex items-center gap-2 px-6 py-3 bg-white rounded-xl text-primary-600 font-bold hover:shadow-lg transition-all border border-primary-200">
+                                        <i class="fa-solid fa-link"></i>
+                                        <span>https://qualitywater-smv.streamlit.app/</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Opciones de base de datos -->
+                <div class="mt-20 grid md:grid-cols-2 gap-8">
+                    <div
+                        class="bg-gradient-to-br from-slate-50 to-white rounded-3xl p-8 border-2 border-primary-200 shadow-xl">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
+                                <i class="fa-solid fa-database text-green-600 text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-900">Opción A: SQLite</h3>
+                                <span class="text-xs text-green-600 font-bold uppercase">Recomendado</span>
+                            </div>
+                        </div>
+                        <ul class="space-y-3 text-slate-600">
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-green-500 mt-1"></i>
+                                <span>No requiere servidor externo</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-green-500 mt-1"></i>
+                                <span>Archivo auto-contenido quality_water.db</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-green-500 mt-1"></i>
+                                <span>Ideal para desarrollo y pruebas</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-green-500 mt-1"></i>
+                                <span>Configuración mínima requerida</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div
+                        class="bg-gradient-to-br from-slate-50 to-white rounded-3xl p-8 border border-slate-200 shadow-lg">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center">
+                                <i class="fa-solid fa-server text-orange-600 text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-900">Opción B: MySQL</h3>
+                                <span class="text-xs text-orange-600 font-bold uppercase">Producción</span>
+                            </div>
+                        </div>
+                        <ul class="space-y-3 text-slate-600">
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-orange-500 mt-1"></i>
+                                <span>Motor de base de datos completo</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-orange-500 mt-1"></i>
+                                <span>Conexión mediante credenciales .env</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-orange-500 mt-1"></i>
+                                <span>Ideal para entornos productivos</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-orange-500 mt-1"></i>
+                                <span>Script de migración incluido</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Llamado a la acción -->
+    <section class="py-24 gradient-bg relative overflow-hidden">
+        <div class="absolute inset-0">
+            <div
+                class="absolute top-0 left-0 w-full h-full bg-[url('image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNjAgMTAiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjEiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNIDEwIDAgTCAxMCA2MCIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgZmlsbD0ibm9uZSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-30">
+            </div>
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10 text-center">
+            <h2 class="text-4xl md:text-6xl font-bold text-white mb-6">¿Listo para Comenzar?</h2>
+            <p class="text-xl text-white/90 mb-10 max-w-2xl mx-auto">
+                Únete a la comunidad de análisis de calidad del agua en Colombia.
+                Proyecto 100% código abierto y gratuito.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-5 justify-center">
+                <a href="#instalacion"
+                    class="px-10 py-5 bg-white text-primary-600 font-bold rounded-2xl transition-all shadow-2xl hover:scale-105 flex items-center justify-center gap-3 text-lg">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Descargar Proyecto</span>
+                </a>
+                <a href="https://github.com" target="_blank"
+                    class="px-10 py-5 bg-slate-900/20 hover:bg-slate-900/30 backdrop-blur-md border-2 border-white/30 text-white font-bold rounded-2xl transition-all hover:scale-105 flex items-center justify-center gap-3 text-lg">
+                    <i class="fa-brands fa-github"></i>
+                    <span>Ver en GitHub</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pie de Página -->
+    <footer class="bg-slate-900 text-slate-400 py-16 border-t border-slate-800">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div class="md:col-span-2">
+                    <a href="#" class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center text-white">
+                            <i class="fa-solid fa-droplet text-xl"></i>
+                        </div>
+                        <div>
+                            <span class="text-xl font-bold text-white block">Quality<span
+                                    class="text-primary-500">Water</span></span>
+                            <span class="text-xs text-slate-500">Análisis IRCA Colombia</span>
+                        </div>
+                    </a>
+                    <p class="text-sm leading-relaxed mb-6 max-w-md">
+                        Proyecto de código abierto para el análisis histórico del Índice de Riesgo de la Calidad del
+                        Agua en Colombia.
+                        Datos transparentes para decisiones informadas.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#"
+                            class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary-600 hover:text-white transition-all"
+                            aria-label="GitHub">
+                            <i class="fa-brands fa-github"></i>
+                        </a>
+                        <a href="#"
+                            class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary-600 hover:text-white transition-all"
+                            aria-label="LinkedIn">
+                            <i class="fa-brands fa-linkedin-in"></i>
+                        </a>
+                        <a href="#"
+                            class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary-600 hover:text-white transition-all"
+                            aria-label="Email">
+                            <i class="fa-solid fa-envelope"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-white mb-4">Enlaces Rápidos</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="#inicio" class="hover:text-primary-400 transition">Inicio</a></li>
+                        <li><a href="#contexto" class="hover:text-primary-400 transition">Contexto IRCA</a></li>
+                        <li><a href="#caracteristicas" class="hover:text-primary-400 transition">Características</a>
+                        </li>
+                        <li><a href="#tecnologia" class="hover:text-primary-400 transition">Tecnología</a></li>
+                        <li><a href="#instalacion" class="hover:text-primary-400 transition">Instalación</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-white mb-4">Recursos</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="#" class="hover:text-primary-400 transition">Documentación</a></li>
+                        <li><a href="#" class="hover:text-primary-400 transition">API Reference</a></li>
+                        <li><a href="#" class="hover:text-primary-400 transition">Reportar Bug</a></li>
+                        <li><a href="#" class="hover:text-primary-400 transition">Contribuir</a></li>
+                        <li><a href="#" class="hover:text-primary-400 transition">Licencia MIT</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-sm">
+                    &copy; 2024 QualityWater. Desarrollado con <i class="fa-solid fa-heart text-red-500"></i> usando
+                    Python y Streamlit.
+                </p>
+                <div class="flex items-center gap-6 text-sm">
+                    <a href="#" class="hover:text-white transition">Términos</a>
+                    <a href="#" class="hover:text-white transition">Privacidad</a>
+                    <a href="#" class="hover:text-white transition">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Alternar menú móvil
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Copiar al portapapeles
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = event.target.innerHTML;
+                event.target.innerHTML = '<i class="fa-solid fa-check"></i> Copiado';
+                setTimeout(() => {
+                    event.target.innerHTML = originalText;
+                }, 2000);
+            }).catch(err => {
+                alert('Error al copiar: ' + err);
+            });
+        }
+
+        // Efecto de desplazamiento en la barra de navegación
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 100) {
+                navbar.classList.add('shadow-lg');
+                navbar.classList.replace('bg-white/95', 'bg-white');
+            } else {
+                navbar.classList.remove('shadow-lg');
+                navbar.classList.replace('bg-white', 'bg-white/95');
+            }
+        });
+
+        // Animación de elementos al hacer scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .stat-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+
+        // Smooth scroll para enlaces de anclaje
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offsetTop = target.offsetTop - 80;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
